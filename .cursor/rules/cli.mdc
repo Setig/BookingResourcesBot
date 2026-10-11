@@ -1,0 +1,13 @@
+---
+description: Local CLI client behavior and options
+globs: cli/**
+alwaysApply: false
+---
+# Local CLI client
+- `booking-resources-cli` talks to the server over `QLocalSocket`.
+- `cli/src/main.cpp` initializes `BookingResourcesTranslator("booking-resources-cli")` before parsing CLI arguments.
+- `LocalCliClient` configures UTF-8 console streams, cleans stale registry entries during startup/listing, and provides instance listing plus an interactive shell.
+- The interactive TTY shell uses `CliLineEditor` for Tab completion and in-memory Up/Down history for the current process. `--command` and piped stdin stay line-based.
+- Meta-commands (`\`) complete locally. Slash-commands and arguments use the `complete` / `complete-result` protocol frames when the host advertises `features: ["complete"]`.
+- Prompt highlighting is controlled by `BOOKING_RESOURCES_CLI_COLOR`: `auto` behavior by default, `always/on/1/true`, or `never/off/0/false`.
+- CLI options: `--list/-l`, `--pid/-p` (or positional pid), `--command/-c` (requires pid), plus standard `--help` and `--version`.

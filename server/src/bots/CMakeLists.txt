@@ -1,0 +1,16 @@
+set(BOOKING_RESOURCES_BOTS_SOURCES
+  TelegramBot.cpp
+  TelegramBot.h
+  KonturTalkBot.cpp
+  KonturTalkBot.h
+  LocalCliBot.cpp
+  LocalCliBot.h
+  WebBot.cpp
+  WebBot.h
+)
+
+list(TRANSFORM BOOKING_RESOURCES_BOTS_SOURCES PREPEND "${CMAKE_CURRENT_LIST_DIR}/")
+
+set(BOOKING_RESOURCES_BOTS_SOURCES ${BOOKING_RESOURCES_BOTS_SOURCES} PARENT_SCOPE)
+
+

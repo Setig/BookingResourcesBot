@@ -1,0 +1,14 @@
+---
+description: Common application and logging modules
+globs: modules/application/**,modules/application_log/**,server/src/*Application.*,web/src/*Application.*,server/src/*Log.*,web/src/*Log.*
+alwaysApply: false
+---
+# Application runtime
+- `BookingResourcesApplication` is the shared `QCoreApplication` base for long-running executables; derive process applications from it instead of duplicating startup/shutdown plumbing.
+- `logStartup()`, `logShutdownStarted()`, and `logShutdownFinished()` are one-shot helpers; process classes should call them around their own startup and `performShutdown()` work.
+- `performShutdown()` must be idempotent through the base `shutdown()` path and should close external endpoints before deleting owned services.
+- Platform termination handling belongs in `modules/application`, not in server/web entry points.
+- `CTRL_C_EVENT` / `CTRL_BREAK_EVENT` / Unix `SIGINT` and `QEvent::Quit` must not stop server/web while a Local CLI session is active (`retainConsoleInterruptSuppression` / `releaseConsoleInterruptSuppression`). Swallow `QEvent::Quit` in `BookingResourcesApplication::event()` so Qt's own console handler cannot quit the process. Also ignore Ctrl+C and `QEvent::Quit` when `booking-resources-cli` shares the same console: the CLI disconnects on that keypress, so the session count may already be zero when Quit is processed. Re-arm the Windows console handler after `exec()` starts and again on retain, because Qt may install its handler when the dispatcher starts. `CTRL_CLOSE` / logoff / shutdown, and Unix `SIGTERM` / `SIGHUP`, still quit; set a force-quit latch so `QEvent::Quit` is not swallowed while Local CLI is connected.
+- On Unix, handle `SIGINT` / `SIGTERM` / `SIGHUP` with a self-pipe and `QSocketNotifier` (async-signal-safe `write()` only in the handler). `SIGINT` follows the Ctrl+C Local CLI rule; `SIGTERM` and `SIGHUP` always quit.
+- `ApplicationLog` is the shared Qt message handler. Keep process wrappers such as `ServerLog` and `WebLog` thin.
+- With a configured log file, Qt messages are written to dated rotating log files and console logging is suppressed; without it, Debug/Info/Warning go to stdout and Critical/Fatal go to stderr.

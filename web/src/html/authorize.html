@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en" data-i18n-pending>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="authorize_title">Authorization</title>
+  <link rel="icon" type="image/svg+xml" href="/booking-resources.svg">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/locale-boot.js"></script>
+  <script src="/theme.js" defer></script>
+  <script src="/i18n.js" defer></script>
+  <script src="/app.js" defer></script>
+  <script src="/authorize.js" defer></script>
+</head>
+<body data-page="authorize">
+  <main class="page page-with-actions centered-card">
+    <div class="page-content">
+      <section class="card">
+        <h1 data-i18n="authorize_title">Authorization</h1>
+        <p id="authorizeIntro" class="muted" data-i18n="authorize_intro" hidden>Choose how to sign in.</p>
+        <div id="authorizedSession" class="authorized-session" hidden>
+          <p class="status" data-i18n="current_user_authorized">The current user is authorized.</p>
+          <p class="settings-user-id">
+            <span data-i18n="user_id">Your User ID:</span>
+            <span id="authorizedUserId" class="readonly-value">web:</span>
+            <button id="authorizeLogoutButton" class="button secondary user-id-logout-button" type="button" data-i18n="logout" data-i18n-title="logout_hint" data-i18n-aria-label="logout_hint" title="End this web session. You can sign in again using an enabled authorization method." aria-label="End this web session. You can sign in again using an enabled authorization method.">Log out</button>
+          </p>
+          <div class="actions">
+            <a class="button primary" href="/chat.html" data-i18n="go_to_chat">Go to chat</a>
+          </div>
+        </div>
+        <div id="authMethodSwitch" class="auth-mode-switch auth-method-switch" role="tablist" aria-label="Sign in mode" hidden>
+          <button id="showWebProfileButton" class="button secondary active" type="button" role="tab" aria-selected="true" aria-controls="webProfileSection" data-i18n="web_profile_title" hidden>Sign in without registration</button>
+          <button id="showLoginButton" class="button secondary" type="button" role="tab" aria-selected="false" aria-controls="loginForm" data-i18n="login_button" hidden>Log in</button>
+          <button id="showRegistrationButton" class="button secondary" type="button" role="tab" aria-selected="false" aria-controls="registrationForm" data-i18n="register_button" hidden>Register</button>
+        </div>
+        <section id="localPasswordSection" class="auth-method-section" hidden>
+          <form id="loginForm" class="form" action="/api/login" method="post" autocomplete="on" data-auth-mode="login">
+            <p class="auth-mode-description muted" data-i18n="login_mode_description">Sign in with the login saved during registration to continue using your existing web profile.</p>
+            <label>
+              <span data-i18n="login">Login</span>
+              <input name="login" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+            </label>
+            <label>
+              <span data-i18n="password">Password</span>
+              <input name="password" type="password" autocomplete="current-password" required>
+            </label>
+            <p id="loginError" class="error" hidden></p>
+            <button class="button primary" type="submit" data-i18n="login_button">Log in</button>
+          </form>
+          <form id="registrationForm" class="form" action="/api/register" method="post" autocomplete="on" data-auth-mode="register" hidden>
+            <p class="auth-mode-description muted" data-i18n="registration_mode_description">Create a login and password so you can keep access to this web profile and sign in with this login later.</p>
+            <label>
+              <span data-i18n="login">Login</span>
+              <input name="login" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+            </label>
+            <label>
+              <span data-i18n="password">Password</span>
+              <input name="password" type="password" autocomplete="new-password" required>
+            </label>
+            <label>
+              <span data-i18n="confirm_password">Confirm password</span>
+              <input name="confirm_password" type="password" autocomplete="new-password" required>
+            </label>
+            <label>
+              <span data-i18n="first_name">First name</span>
+              <input name="first_name" autocomplete="given-name" required>
+            </label>
+            <label>
+              <span data-i18n="last_name">Last name</span>
+              <input name="last_name" autocomplete="family-name">
+            </label>
+            <label>
+              <span data-i18n="locale">Locale</span>
+              <select name="locale">
+                <option value="en" data-i18n="english">English</option>
+                <option value="ru" data-i18n="russian">Russian</option>
+                <option value="ru_stand" data-i18n="russian_stand">Russian (stands)</option>
+              </select>
+            </label>
+            <p id="registrationError" class="error" hidden></p>
+            <button class="button primary" type="submit" data-i18n="register_button">Register</button>
+          </form>
+        </section>
+        <section id="webProfileSection" class="auth-method-section" hidden>
+          <form id="authorizationForm" class="form">
+            <p class="auth-mode-description muted" data-i18n="web_profile_mode_description">Temporary sign-in does not create a login. Access to this web profile may be lost if the web session is lost.</p>
+            <label>
+              <span data-i18n="first_name">First name</span>
+              <input name="first_name" autocomplete="given-name" required>
+            </label>
+            <label>
+              <span data-i18n="last_name">Last name</span>
+              <input name="last_name" autocomplete="family-name">
+            </label>
+            <label>
+              <span data-i18n="locale">Locale</span>
+              <select name="locale">
+                <option value="en" data-i18n="english">English</option>
+                <option value="ru" data-i18n="russian">Russian</option>
+                <option value="ru_stand" data-i18n="russian_stand">Russian (stands)</option>
+              </select>
+            </label>
+            <p id="authorizationError" class="error" hidden></p>
+            <button class="button primary" type="submit" data-i18n="authorize_button">Authorize</button>
+          </form>
+        </section>
+      </section>
+    </div>
+    <nav class="top-actions" aria-label="Page actions">
+      <button class="theme-toggle" type="button" data-theme-toggle data-i18n-title="theme_toggle" title="Toggle color theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 4A8 8 0 0 0 12 20Z" fill="currentColor" stroke="none"/>
+        </svg>
+      </button>
+    </nav>
+  </main>
+</body>
+</html>

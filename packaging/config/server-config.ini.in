@@ -1,0 +1,22 @@
+; System-scope configuration for booking-resources-server.
+; Copy this file to the Qt QSettings system-scope location for the server:
+;   Linux:   /etc/xdg/BookingResourcesBot-Server/config.ini
+;   Windows: %ProgramData%\BookingResourcesBot-Server\config.ini
+
+[database]
+file=@BOOKING_RESOURCES_PACKAGE_STATEDIR@/resources_bot.sqlite
+
+[log]
+file=@BOOKING_RESOURCES_PACKAGE_LOGDIR@/server.log
+
+[web]
+shared_memory_key=@BOOKING_RESOURCES_WEB_SHARED_MEMORY_KEY@
+shared_memory_secret=change-me-long-random-secret
+
+[bots/telegram]
+token=
+admin_ids=
+
+[bots/kontur-talk]
+token=
+admin_ids=

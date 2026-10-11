@@ -1,0 +1,38 @@
+---
+description: Translation pipeline and runtime locale
+alwaysApply: true
+---
+# Translations
+- Sources live in `server/translations/booking-resources-server_{en,ru,ru_stand}.ts`, `cli/translations/booking-resources-cli_{en,ru,ru_stand}.ts`, and `web/translations/booking-resources-web_{en,ru,ru_stand}.ts`.
+- Translator module tests use `tests/translator/translations/booking-resources-translator-tests_ru.ts` without a matching `_en.ts`.
+- Web static UI strings are listed manually in `web/src/WebStaticTranslations.cpp`; `Entry::key` values must match HTML `data-i18n*` attributes and JS text keys. Update `entries()`, matching `touchTranslations()` `(void)tr(...)` calls, and web `.ts` files together when adding/changing static UI text.
+- `booking_resources_setup_translations()` generates `.qm` files and compiles them into a generated `qrc_*_translations.cpp` from a generated `*_translations.qrc`, added via explicit `add_custom_command()` + `target_sources()` rather than relying on AUTORCC.
+- Translation `BASE_NAME` can differ from target name when needed; CLI uses matching target and base `booking-resources-cli`.
+- Default QRC prefix is `/translations`; `lupdate` update targets run with `-locations none`.
+- On Qt 6, the generated translations RCC step uses `rcc --no-zstd`.
+- Default generated targets: `<sanitized_target>_translations` and `update_<sanitized_target>_translations` (Qt::lupdate).
+- Repo translation targets: server `booking_resources_server_translations` (update `update_server_translations`); cli `booking_resources_cli_translations` (update `update_cli_translations`); web `booking_resources_web_translations` (update `update_web_translations`); translator tests `booking_resources_translator_tests_translations` (update `update_translator_tests_translations`).
+- Runtime locale resolution: `modules/translator/src/BookingResourcesTranslator.*` supports `BOOKING_BOT_LOCALE`.
+- Locale priority: preferred locale arg > `BOOKING_BOT_LOCALE` > system locale.
+- Fallback order: exact/normalized locale (`ru_stand` or `ru-stand`) -> Qt full locale (`ru_RU`) -> language-only (`ru`) -> `en` (built-in strings).
+- Server and CLI initialize their base translator with default locale resolution; web initializes its base translator with English and then uses scoped overrides for request/user locales.
+- Use `BookingResourcesTranslator::useLocale()` for scoped per-request/per-user locale rendering instead of replacing the process-wide translator.
+- Search paths: `:/translations`, `<appDir>/translations`, `<appDir>`.
+
+## Specialized Russian locale
+- Locale `ru_stand` is a separate Russian terminology variant where user-facing translations render `resource` / `resources` as `стенд` / `стенды` instead of `ресурс` / `ресурсы`.
+- Keep `ru_stand` TS files in sync with matching `ru` files when adding or changing user-facing strings; copy the Russian translation first, then adjust only the resource terminology.
+- Do not replace source strings or command/config identifiers such as `/add_resource`, `queue.max_resources_per_user`, executable names, file names, or API fields.
+- Keep `ru_stand` selectable in server user settings and web UI; web locale normalization must preserve `ru_stand` instead of collapsing every `ru*` value to `ru`.
+- In the web frontend, `i18n.js` keeps `ru_stand` as the stored/dictionary locale, while `primaryLocale()` / `intlLocale()` may map it to `ru` for browser language and formatting helpers.
+
+## Russian terminology decisions
+- `Start message` / `Start instructions` / `Start`: `стартовое сообщение`.
+- `Occupation` / `occupation duration`: `занятость` / `длительность занятости`.
+- `Schedule` / `reservation`: `расписание`, `запланировать`, `запись расписания`.
+- `Time window` / `slot`: `интервал`.
+- `Indefinite`: `бессрочно`.
+- `Admin` (adjective): `админские` (e.g. админские команды).
+- `Slash-commands`: `слеш-команды`.
+- `Local CLI`: keep as `Local CLI` (do not localize).
+- Avoid mixing with: `бронь`, `слот`, `окно`, `сообщение запуска`, `инструкции по запуску`, `занятие`, `неограниченно`, `слэш-команды`, `Локальный CLI`.

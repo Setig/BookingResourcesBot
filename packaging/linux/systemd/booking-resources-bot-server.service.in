@@ -1,0 +1,13 @@
+[Unit]
+Description=Booking Resources Bot Server
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=@CMAKE_INSTALL_FULL_BINDIR@/booking-resources-server
+WorkingDirectory=@CMAKE_INSTALL_FULL_BINDIR@
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

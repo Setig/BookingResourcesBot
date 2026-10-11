@@ -1,0 +1,77 @@
+Language:        Cpp
+BasedOnStyle:    WebKit
+Standard:        c++17
+UseCRLF:         true
+ColumnLimit:     100
+IndentWidth:     4
+TabWidth:        4
+UseTab:          Never
+AccessModifierOffset: -4
+AlignAfterOpenBracket: true
+AlignOperands:   true
+AlignTrailingComments: true
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: false
+BinPackParameters: false
+BraceWrapping:
+  AfterClass:       true
+  AfterControlStatement: false
+  AfterEnum:        false
+  AfterFunction:    true
+  AfterNamespace:   false
+  AfterStruct:      true
+  BeforeCatch:      false
+  BeforeElse:       false
+  IndentBraces:     false
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Custom
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 4
+PackConstructorInitializers: Never
+ContinuationIndentWidth: 8
+CommentPragmas: "^!|^:|^ SPDX-License-Identifier:"
+DerivePointerAlignment: false
+PointerAlignment: Right
+ReferenceAlignment: Right
+FixNamespaceComments: true
+ShortNamespaceLines: 1
+ForEachMacros: [ foreach, Q_FOREACH, BOOST_FOREACH, forever, Q_FOREVER, QBENCHMARK, QBENCHMARK_ONCE ]
+IncludeBlocks:   Preserve
+SeparateDefinitionBlocks: Always
+IndentCaseLabels: false
+IndentPPDirectives: AfterHash
+PPIndentWidth: 2
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: None
+ReflowComments: false
+SortIncludes:    false
+AlignEscapedNewlines: Left
+SpaceAfterCStyleCast: false
+SpaceAfterTemplateKeyword: true
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatements
+SpacesBeforeTrailingComments: 1
+SpacesInAngles:  false
+SpacesInCStyleCastParentheses: false
+SpacesInParentheses: false
+SpacesInContainerLiterals: true
+PenaltyReturnTypeOnItsOwnLine: 200
+PenaltyBreakBeforeFirstCallParameter: 200
+Cpp11BracedListStyle: false
+---
+Language:        Proto
+BasedOnStyle:    Google
+IndentWidth:     4
+ColumnLimit:     100

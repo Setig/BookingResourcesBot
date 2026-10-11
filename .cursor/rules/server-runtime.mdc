@@ -1,0 +1,30 @@
+---
+description: Server startup, database, and bots
+globs: server/**
+alwaysApply: false
+---
+# Server runtime
+- `server/src/main.cpp` creates `ServerApplication`, which derives from `BookingResourcesApplication`; keep process startup in `tryStart()` and cleanup in `performShutdown()`.
+- `ServerApplication::tryStart()` configures logging, then initializes `BookingResourcesTranslator("booking-resources-server")`.
+- Reads `ServerConfig` (INI user scope) and parses CLI args via `ServerCommandLineParser`.
+- Config keys: `database/file`, `log/file`, `web/shared_memory_key`, `web/shared_memory_secret`, `bots/<messenger>/{token,admin_ids}` (legacy: `telegram/{token,admin_ids}`).
+- Logging via `ServerLog::initializeLogging()`, which delegates to shared `ApplicationLog`.
+- Opens `ServerDatabase` (SQLite via QtSql) and ensures admin users specified by `--admin`.
+- Exits if no messenger tokens and no web shared memory key are provided; Local CLI alone is not sufficient.
+- After database/admin setup and backend validation, starts Local CLI endpoint via `LocalCliRegistry::defaultServerName(applicationPid())` (endpoint `booking-resources-<pid>`); Local CLI is not counted as a real backend.
+- Starts Web IPC when `--web-shared-memory-key`/config key is present; `--web-shared-memory-secret`/`web/shared_memory_secret` is required for authenticated IPC frames.
+- Server CLI options include `--log-file/-l`, `--db-file`, `--telegram-token`, `--kontur-talk-token`, `--web-shared-memory-key`, `--web-shared-memory-secret`, and `--admin <messenger>:<user_id>` (repeatable).
+- Database defaults: `QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)/resources_bot.sqlite` (fallback to `QDir::currentPath()` if empty); WAL mode; `PRAGMA quick_check` during init.
+- Backup uses `VACUUM INTO <db>.bak`; corrupt DBs renamed to `*.corrupted.<timestamp>`.
+- Occupation durations normalized in DB layer (ensures `0`, clamps negatives, sorts, removes duplicates) before `OccupationDurationModel` update.
+- Default occupation durations are `{0, 5, 30, 60, 120, 240}` minutes.
+- `LocalCliBot` hosts a `QLocalServer`, requires a `hello` handshake, and forwards `command` frames as `AbstractBot::IncomingMessage` with `MessengerType::LocalCli`.
+- `AbstractBot` is messenger-agnostic; `editMessage()` defaults to `sendMessage()`.
+- Commands self-register via `BOOKING_RESOURCES_REGISTER_COMMAND` / `_IF`; menus self-register via `BOOKING_RESOURCES_REGISTER_MENU` and state-specific variants. Keep `booking_resources_target_link_core()` on the `tests` executable so static registration units are linked.
+- Message formatting: `AbstractBot::MessageOptions::format` (`PlainText`, `Markdown`, `Html`); capabilities include `MarkdownFormatting`, `HtmlFormatting`, `InlineKeyboards`.
+- Users identified by `MessengerUserKey` string `<messenger>:<user_id>` (e.g. `telegram:123`).
+- Implementations include `TelegramBot` (polling), `KonturTalkBot`, `WebBot` (shared-memory IPC), and `LocalCliBot` (local IPC).
+- `MessengerBot` wires persistence + command/menu logic; `MessengerBotPoll` owns at most one `MessengerBot` per `MessengerType` and returns the existing instance on repeated `createBot()` calls.
+- `WebBot` supports Markdown, HTML, and inline keyboards; outgoing web message IDs must use UUID-like IDs, not restart-local counters.
+- Web authorization records users in `UnregisteredUserModel` via `authorize_user` IPC; do not reintroduce direct self-registration in `ServerDatabase`.
+- `MessengerType` includes `LocalCli`, `Telegram`, `KonturTalk`, and `Web`.

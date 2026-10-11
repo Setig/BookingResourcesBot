@@ -1,0 +1,29 @@
+; System-scope configuration for booking-resources-web.
+; Copy this file to the Qt QSettings system-scope location for the web process:
+;   Linux:   /etc/xdg/BookingResourcesBot-Web/web.ini
+;   Windows: %ProgramData%\BookingResourcesBot-Web\web.ini
+
+[web]
+bind_address=127.0.0.1
+http_port=8080
+https_port=8443
+http_enabled=true
+redirect_http_to_https=true
+shared_memory_key=@BOOKING_RESOURCES_WEB_SHARED_MEMORY_KEY@
+shared_memory_secret=change-me-long-random-secret
+https_enabled=false
+external_https_enabled=false
+allow_insecure_http=false
+forwarded_headers_enabled=false
+trusted_proxies=
+public_https_host=
+tls_certificate_file=
+tls_private_key_file=
+tls_reload_interval_seconds=0
+threads=4
+storage_file=@BOOKING_RESOURCES_PACKAGE_STATEDIR@/booking-resources-web.sqlite
+page_title=Booking Resources
+auth_methods=sign-without-registration
+
+[log]
+file=@BOOKING_RESOURCES_PACKAGE_LOGDIR@/web.log

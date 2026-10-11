@@ -1,0 +1,22 @@
+param(
+    [Parameter(Mandatory = $true)]
+    [string]$WinSwExecutable,
+
+    [switch]$StartService
+)
+
+$ErrorActionPreference = "Stop"
+
+$serviceName = "@BOOKING_RESOURCES_WINDOWS_SERVICE_NAME_WEB@"
+$serviceExe = Join-Path $PSScriptRoot ($serviceName + ".exe")
+$configTarget = Join-Path $env:ProgramData "@BOOKING_RESOURCES_WEB_SETTINGS_ORGANIZATION@\\@BOOKING_RESOURCES_WEB_SETTINGS_APPLICATION@.ini"
+
+Copy-Item -Path $WinSwExecutable -Destination $serviceExe -Force
+& $serviceExe install
+
+Write-Host "WinSW service installed as $serviceName."
+Write-Host "Copy the system-scope config template to $configTarget before starting the service."
+
+if ($StartService) {
+    & $serviceExe start
+}

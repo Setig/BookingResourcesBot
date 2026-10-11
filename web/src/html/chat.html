@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en" data-i18n-pending>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="chat_title">Chat</title>
+  <link rel="icon" type="image/svg+xml" href="/booking-resources.svg">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/locale-boot.js"></script>
+  <script src="/theme.js" defer></script>
+  <script src="/i18n.js" defer></script>
+  <script src="/app.js" defer></script>
+  <script src="/settings.js" defer></script>
+  <script src="/chat.js" defer></script>
+</head>
+<body data-page="chat">
+  <main class="page chat-page">
+    <section class="chat-content">
+      <section class="message-list-frame">
+        <div class="message-list-edge-fade message-list-edge-fade-top" aria-hidden="true"></div>
+        <section id="messageList" class="message-list" aria-live="polite">
+          <p class="empty-state" data-i18n="no_messages">No messages yet.</p>
+        </section>
+        <div class="message-list-edge-fade message-list-edge-fade-bottom" aria-hidden="true"></div>
+      </section>
+      <section class="chat-composer">
+        <section id="commandSuggestions" class="command-suggestions" hidden></section>
+        <form id="messageForm" class="message-form">
+          <button
+            id="openCommandMenuButton"
+            class="message-form-menu-button"
+            type="button"
+            data-i18n-title="open_command_menu"
+            data-i18n-aria-label="open_command_menu"
+            title="Open command menu"
+            aria-label="Open command menu"
+            aria-haspopup="true"
+            aria-controls="commandSuggestions"
+            aria-expanded="false"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M7 7h12M7 12h12M7 17h12"/>
+              <circle cx="4" cy="7" r="1"/>
+              <circle cx="4" cy="12" r="1"/>
+              <circle cx="4" cy="17" r="1"/>
+            </svg>
+          </button>
+          <textarea
+            id="messageInput"
+            name="text"
+            rows="1"
+            autocomplete="off"
+            enterkeyhint="send"
+            data-i18n-placeholder="message_placeholder"
+            data-i18n-title="message_input_hint"
+            data-i18n-aria-label="message_input_hint"
+            placeholder="Type a message..."
+            title="Enter to send, Shift+Enter for a new line"
+            aria-label="Enter to send, Shift+Enter for a new line"
+          ></textarea>
+          <button class="button primary" type="submit" data-i18n="send">Send</button>
+        </form>
+      </section>
+      <p id="chatError" class="error" hidden></p>
+    </section>
+    <nav class="top-actions" aria-label="Page actions">
+      <button class="theme-toggle" type="button" data-theme-toggle data-i18n-title="theme_toggle" title="Toggle color theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8"/>
+          <path d="M12 4A8 8 0 0 0 12 20Z" fill="currentColor" stroke="none"/>
+        </svg>
+      </button>
+      <button id="openSettingsButton" class="settings-link" type="button" data-i18n-title="open_settings" data-i18n-aria-label="open_settings" title="Open settings" aria-label="Open settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M19.43 12.98c.04-.32.07-.65.07-.98s-.02-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.37-.31-.6-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98L14.5 2.42A.488.488 0 0 0 14 2h-4c-.25 0-.46.18-.5.42L9.12 5.07c-.61.25-1.18.59-1.69.98l-2.49-1c-.23-.08-.48 0-.6.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.08.65-.08.98s.03.66.08.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.37.31.6.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.38-2.65c.61-.25 1.18-.59 1.69-.98l2.49 1c.23.08.48 0 .6-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65ZM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5Z"/>
+        </svg>
+      </button>
+    </nav>
+    <section id="settingsPanel" class="settings-overlay" role="dialog" aria-modal="true" aria-labelledby="settingsPanelTitle" hidden>
+      <section class="card settings-dialog">
+        <div class="settings-dialog-header">
+          <h1 id="settingsPanelTitle" data-i18n="settings_title">Settings</h1>
+          <button id="settingsCloseButton" class="settings-close-button" type="button" data-i18n-title="back_to_chat" data-i18n-aria-label="back_to_chat" title="Back to chat" aria-label="Back to chat">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M6 6 18 18M18 6 6 18"/>
+            </svg>
+          </button>
+        </div>
+        <form id="settingsForm" class="form">
+          <div class="settings-group">
+            <h2 data-i18n="local_password_title">Account</h2>
+            <p class="settings-user-id">
+              <span data-i18n="user_id">Your User ID:</span>
+              <span id="userIdInput" class="readonly-value">web:</span>
+              <button id="copyUserIdButton" class="button secondary user-id-copy-button" type="button" data-i18n-title="copy_user_id" data-i18n-aria-label="copy_user_id" title="Copy User ID to clipboard" aria-label="Copy User ID to clipboard">
+                <svg class="user-id-copy-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <rect x="9" y="9" width="10" height="10" rx="2"/>
+                  <path d="M5 15V7a2 2 0 0 1 2-2h8"/>
+                </svg>
+                <svg class="user-id-copy-done-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M5 12.5 10 17 19 7"/>
+                </svg>
+                <svg class="user-id-copy-error-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <circle cx="12" cy="12" r="8"/>
+                  <path d="M12 8v5"/>
+                  <path d="M12 16h.01"/>
+                </svg>
+              </button>
+            </p>
+            <p id="localPasswordSettings" class="settings-user-id settings-identity-row" hidden>
+              <span><span data-i18n="login">Login</span>:</span>
+              <span id="localPasswordLoginValue" class="readonly-value"></span>
+            </p>
+            <div class="actions field-actions">
+              <button id="changePasswordButton" class="button secondary" type="button" hidden data-i18n="change_password">Change password</button>
+              <button id="logoutButton" class="button secondary" type="button" data-i18n="logout" data-i18n-title="logout_hint" data-i18n-aria-label="logout_hint" title="End this web session. You can sign in again using an enabled authorization method." aria-label="End this web session. You can sign in again using an enabled authorization method.">Log out</button>
+            </div>
+          </div>
+          <div class="settings-group">
+            <label>
+              <span data-i18n="language">Language</span>
+              <select id="localeSelect" name="locale">
+                <option value="" data-i18n="default_language">Default</option>
+                <option value="en" data-i18n="english">English</option>
+                <option value="ru" data-i18n="russian">Russian</option>
+                <option value="ru_stand" data-i18n="russian_stand">Russian (stands)</option>
+              </select>
+            </label>
+          </div>
+          <div class="settings-group">
+            <div class="settings-fields-row">
+              <label>
+                <span data-i18n="theme">Theme</span>
+                <select id="themeSelect" name="theme">
+                  <option value="light" data-i18n="light_theme">Light</option>
+                  <option value="dark" data-i18n="dark_theme">Dark</option>
+                </select>
+              </label>
+              <div class="settings-history-field">
+                <label>
+                  <span data-i18n="history_limit">Local history limit</span>
+                  <span class="number-field">
+                    <input id="historyLimitInput" type="number" min="20" max="1000" step="10">
+                    <span class="number-field-steps" aria-hidden="true">
+                      <button class="number-field-step" type="button" data-number-step="up" tabindex="-1"></button>
+                      <button class="number-field-step" type="button" data-number-step="down" tabindex="-1"></button>
+                    </span>
+                  </span>
+                </label>
+                <button id="clearHistoryButton" class="button secondary clear-history-button" type="button">
+                  <span data-i18n="clear_history">Clear local history</span>
+                  <svg class="clear-history-done-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M5 12.5 10 17 19 7"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="settings-group">
+            <label>
+              <span data-i18n="timezone">Time zone</span>
+              <select id="timezoneInput" name="timezone"></select>
+              <small class="muted" data-i18n="timezone_hint">Select a UTC offset or use the server default.</small>
+            </label>
+            <label data-i18n-title="occupation_notify_tooltip" title="Choose which occupation changes trigger notifications for you.">
+              <span data-i18n="occupation_notify">Occupation notifications</span>
+              <select id="occupationNotifySelect" name="occupation_notify" data-i18n-title="occupation_notify_tooltip" title="Choose which occupation changes trigger notifications for you.">
+                <option value="all" data-i18n="occupation_notify_all" data-i18n-title="occupation_notify_all_tooltip" title="Notify about occupation changes for all resources visible to you.">All resources</option>
+                <option value="mine" data-i18n="occupation_notify_mine" data-i18n-title="occupation_notify_mine_tooltip" title="Notify only when you occupy or release a resource, or when a resource is handed over to or from you.">Only events involving me</option>
+                <option value="off" data-i18n="occupation_notify_off" data-i18n-title="occupation_notify_off_tooltip" title="Do not send occupation notifications.">Disabled</option>
+              </select>
+            </label>
+          </div>
+          <p id="settingsStatus" class="status" hidden></p>
+          <div class="actions dialog-actions">
+            <button id="settingsCancelButton" class="button secondary" type="button" data-i18n="cancel">Cancel</button>
+            <button id="settingsOkButton" class="button primary" type="submit" data-i18n="ok">OK</button>
+          </div>
+        </form>
+        <section id="changePasswordDialog" class="settings-nested-overlay" role="dialog" aria-modal="true" aria-labelledby="changePasswordDialogTitle" hidden>
+          <section class="card password-dialog">
+            <div class="settings-dialog-header">
+              <h2 id="changePasswordDialogTitle" data-i18n="change_password">Change password</h2>
+              <button id="changePasswordCloseButton" class="settings-close-button" type="button" data-i18n-title="cancel" data-i18n-aria-label="cancel" title="Cancel" aria-label="Cancel">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M6 6 18 18M18 6 6 18"/>
+                </svg>
+              </button>
+            </div>
+            <form id="changePasswordForm" class="form">
+              <label>
+                <span data-i18n="current_password">Current password</span>
+                <input id="currentPasswordInput" type="password" autocomplete="current-password" required>
+              </label>
+              <label>
+                <span data-i18n="new_password">New password</span>
+                <input id="newPasswordInput" type="password" autocomplete="new-password" required>
+              </label>
+              <label>
+                <span data-i18n="confirm_new_password">Confirm new password</span>
+                <input id="confirmNewPasswordInput" type="password" autocomplete="new-password" required>
+              </label>
+              <p id="changePasswordStatus" class="error" hidden></p>
+              <div class="actions dialog-actions">
+                <button id="changePasswordCancelButton" class="button secondary" type="button" data-i18n="cancel">Cancel</button>
+                <button class="button primary" type="submit" data-i18n="ok">OK</button>
+              </div>
+            </form>
+          </section>
+        </section>
+      </section>
+    </section>
+  </main>
+</body>
+</html>

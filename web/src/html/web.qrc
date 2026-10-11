@@ -1,0 +1,21 @@
+<RCC>
+  <qresource prefix="/web">
+    <file alias="index.html">index.html</file>
+    <file alias="authorize.html">authorize.html</file>
+    <file alias="set-password.html">set-password.html</file>
+    <file alias="reset-password.html">reset-password.html</file>
+    <file alias="chat.html">chat.html</file>
+    <file alias="booking-resources.svg">../../../icons/booking-resources.svg</file>
+    <file alias="styles.css">styles.css</file>
+    <file alias="locale-boot.js">locale-boot.js</file>
+    <file alias="theme.js">theme.js</file>
+    <file alias="i18n.js">i18n.js</file>
+    <file alias="app.js">app.js</file>
+    <file alias="index.js">index.js</file>
+    <file alias="authorize.js">authorize.js</file>
+    <file alias="set-password.js">set-password.js</file>
+    <file alias="reset-password.js">reset-password.js</file>
+    <file alias="chat.js">chat.js</file>
+    <file alias="settings.js">settings.js</file>
+  </qresource>
+</RCC>

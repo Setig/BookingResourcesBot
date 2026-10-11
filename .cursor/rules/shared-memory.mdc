@@ -1,0 +1,16 @@
+---
+description: Shared memory IPC protocol and backpressure rules
+globs: modules/shared_memory/**
+alwaysApply: false
+---
+# Shared Memory IPC
+- `BookingResourcesSharedMemory` exposes `BookingResources::SharedMemory` and is used by `booking-resources-server` and `booking-resources-web`.
+- Protocol frames are compact JSON envelopes with `version`, `type`, `request_id`, `payload`, and optional `auth`.
+- When an authentication secret is configured, `SharedMemoryProtocol` signs the frame envelope with HMAC-SHA256 and rejects missing or invalid `auth` values.
+- Empty base keys normalize to `booking-resources-web`; endpoint channels are `<base>.requests` and `<base>.responses`.
+- `SharedMemoryEndpoint` uses two ring-buffer channels over `QSharedMemory` guarded by `<channel>.lock` `QSystemSemaphore`, with `<channel>.ready` semaphores for event-driven wake-up.
+- A busy channel is normal backpressure. Queue callers should retry later and keep bounded queues instead of logging it as a hard error.
+- Use `sendFrameStatus()` when queueing frames so `Busy` remains retryable and permanent failures are dropped or reported.
+- Use `SharedMemoryProtocol::createRequestId()` for request IDs and web `message_id` values that must survive process restarts.
+- Keep `sendFrame()`/`sendResponse()` available on both client and server sides; server can request web profile data, and web can respond.
+- In web/server integrations, protect shared endpoint sends with a bounded pending queue and synchronization when HTTP handlers or bot events may run concurrently.

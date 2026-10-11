@@ -1,0 +1,20 @@
+---
+description: Documentation structure and maintenance notes
+alwaysApply: true
+---
+# Documentation
+- Keep the root `README.md` in English as a compact entry point with project purpose, executables, quick start, and links to detailed docs.
+- Keep detailed documentation in paired language directories: English under `docs/en/` and Russian under `docs/ru/`.
+- `docs/docs.md` is the language index for detailed documentation; keep it in sync when adding, removing, or renaming major docs.
+- Current detailed docs are split by topic: `applications.md`, `users.md`, `usage.md`, and `resource_queue.md`; update both languages together when changing documented behavior.
+- Every detailed Markdown file under `docs/en/` and `docs/ru/` must include a table of contents immediately after the top-level title: use `## Table of Contents` in English and `## Оглавление` in Russian.
+- `docs/*/applications.md` documents executable purpose, CLI options, Qt INI settings keys, runtime settings, environment variables, and startup requirements for `booking-resources-server`, `booking-resources-cli`, and `booking-resources-web`.
+- `docs/*/users.md` documents registration, combined user keys, user fields, roles, groups, unregistered-user limiter behavior, and the fact that multiple keys for one person are separate accounts.
+- `docs/*/usage.md` documents slash commands, menu workflows, Local CLI usage, web pages, web API endpoints, and primary web registration/chat flow.
+- `docs/*/resource_queue.md` documents queue states, occupy/release/schedule flows, queue-related menus, admin queue actions, and automatic queue events/limits.
+- When executable applications are mentioned in prose, link them to the matching `applications.md` section: `booking-resources-server`, `booking-resources-cli`, `booking-resources-web`, and Local CLI (`booking-resources-cli`). From README use `docs/en/applications.md#...`; from detailed docs use same-language relative links such as `applications.md#booking-resources-cli`.
+- When slash commands are mentioned in prose, link them to the matching command anchor in same-language `usage.md`. Command table entries in `docs/*/usage.md` should define stable anchors before the command link, converting underscores to hyphens in anchor ids (for example `/server_settings` -> `cmd-server-settings`).
+- Keep command examples, executable invocations, config values, web/API routes, and code blocks as literals unless the text is explicitly referring readers to the documented command or application.
+- Keep README text English-only; keep Russian user-facing documentation in `docs/ru/` and English documentation in `docs/en/`.
+- When command names, arguments, runtime setting keys, config keys, menu structure, user identity rules, or web API routes change, update the matching documentation in the same change.
+- Do not document behavior from guesses; verify option names, defaults, command arguments, and route names against source code before editing docs.

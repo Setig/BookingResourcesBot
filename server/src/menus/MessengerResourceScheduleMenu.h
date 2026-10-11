@@ -1,0 +1,35 @@
+#ifndef MESSENGER_RESOURCE_SCHEDULE_MENU_H
+#define MESSENGER_RESOURCE_SCHEDULE_MENU_H
+
+#include "MessengerAbstractMenu.h"
+
+class MessengerUserResourcesState;
+
+class MessengerResourceScheduleMenu final : public MessengerAbstractMenu
+{
+    Q_OBJECT
+
+public:
+    MessengerResourceScheduleMenu(MessengerMenuManager *manager,
+                                  MessengerUserResourcesState *state);
+
+    QString menuId() const override;
+    MessengerMenu::MenuPage buildPage(const MessengerMenu::RenderContext &context) const override;
+
+    bool handleEvent(const QString &event,
+                     const QString &sessionId,
+                     const MessengerMenu::RenderContext &context,
+                     MessengerMenuManager::ActionResult *result) const override;
+
+    bool handleTextInput(const QString &text,
+                         const QString &sessionId,
+                         const MessengerMenu::RenderContext &context,
+                         MessengerMenuManager::ActionResult *result) const override;
+
+private:
+    MessengerUserResourcesState *m_state; // non-owning
+};
+
+BOOKING_RESOURCES_REGISTER_MENU_USER_RESOURCES_STATE(MessengerResourceScheduleMenu)
+
+#endif // MESSENGER_RESOURCE_SCHEDULE_MENU_H

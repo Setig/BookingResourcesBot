@@ -1,0 +1,27 @@
+---
+description: C++/Qt coding and implementation rules
+alwaysApply: true
+---
+# C++/Qt guidelines
+- Prefer small, reviewable diffs and follow existing Qt idioms and patterns.
+- When changing public headers or user-facing behavior, keep Doxygen comments and help/usage strings consistent with the implementation.
+- Preserve CRLF in C++ sources; format with `clang-format -style=file` (see `.clang-format`).
+- Keep modules reusable, keep the server daemon thin, and keep the CLI self-contained.
+
+# C++ implementation rules
+- Do not use `= default` for special members; declare in headers and define out-of-line in `.cpp`.
+- Existing trivial state/menu destructors and legacy trivial model destructors may still use `= default` in `.cpp`; do not add more unless matching nearby code exactly.
+- If a special-member body is empty, keep a `// do nothing` comment inside the function body.
+- Prefer constructor initializer lists for member initialization.
+- For class types, avoid in-class member initializers in headers; move defaults into constructor initializer lists.
+- Do not change `struct` in-class member initializers unless explicitly requested.
+- For frequently copied value types, define or delete copy/move ctor/assignment + destructor (Rule of Five) or use `QSharedDataPointer`; current copied domain values include `User`, `Resource`, `BlacklistEntry`, `UnregisteredUserEntry`, `MessengerUserKey`, and `Group`.
+- For QObject-based classes with non-trivial private state, use pimpl: forward-declare `<Class>Private`, store raw pointer `d`, init in every ctor initializer list, delete in out-of-line dtor.
+- Treat `d` as non-null for the object lifetime; avoid redundant `if (d)` checks.
+- Define `<Class>Private` in the `.cpp`; introduce `*_p.h` when sharing across TUs or when a `.cpp` is very large (~2000+ lines).
+- Never include `*_p.h` from public headers; include from `.cpp` files only.
+- Some code uses a nested `Private` class instead of `<Class>Private` (for example web command-line parsing); prefer local consistency when touching it.
+- `Class *q` inside `<Class>Private` is optional; use it for callbacks or when moving many (>10) helper methods into the private class.
+- For value types, prefer implicit sharing: `QSharedDataPointer` in the header, `QSharedData`-derived data class in the `.cpp`.
+- Avoid unused `FooPrivate` forward declarations in headers.
+- Command/menu self-registration often lives in headers via `BOOKING_RESOURCES_REGISTER_COMMAND` and `BOOKING_RESOURCES_REGISTER_MENU`; keep registrations close to the existing class pattern.

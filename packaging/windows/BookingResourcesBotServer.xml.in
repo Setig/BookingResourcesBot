@@ -1,0 +1,11 @@
+<service>
+  <id>@BOOKING_RESOURCES_WINDOWS_SERVICE_NAME_SERVER@</id>
+  <name>Booking Resources Bot Server</name>
+  <description>Booking Resources Bot server process.</description>
+  <executable>%BASE%\bin\booking-resources-server.exe</executable>
+  <workingdirectory>%BASE%\bin</workingdirectory>
+  <log mode="roll-by-size">
+    <sizeThreshold>10485760</sizeThreshold>
+    <keepFiles>5</keepFiles>
+  </log>
+</service>

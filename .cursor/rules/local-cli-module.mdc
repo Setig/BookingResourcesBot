@@ -1,0 +1,12 @@
+---
+description: Local CLI protocol and registry
+globs: modules/local_cli/**
+alwaysApply: false
+---
+# Local CLI protocol
+- `LocalCliProtocol`: 4-byte little-endian length prefix + compact JSON envelope (`type`, `payload`).
+- Frame types in use: `hello`, `hello-ack`, `command`, `complete`, `complete-result`, `response`, `info`, `error`, `result`, `bye`, `ping`.
+- `hello-ack` may include `features` (currently `complete`). `complete` payload is `{text, cursor}`; `complete-result` is `{replace_from, replace_to, values, append_space}`.
+- `LocalCliRegistry` stores JSON descriptors under `QStandardPaths::GenericDataLocation/booking-resources/local-cli` (with fallbacks).
+- Registry files: `booking-resources-<pid>.json` with keys `pid`, `endpoint`, `executable`, `started_at` (ISO).
+- `LocalCliRegistry::defaultServerName(pid)` returns `booking-resources-<pid>` and falls back to `QCoreApplication::applicationPid()` when pid is not provided.

@@ -1,0 +1,5 @@
+add_subdirectory(local_cli)
+add_subdirectory(application)
+add_subdirectory(application_log)
+add_subdirectory(shared_memory)
+add_subdirectory(translator)

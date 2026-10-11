@@ -1,0 +1,23 @@
+---
+description: CMake structure and core targets
+alwaysApply: true
+---
+# CMake layout
+- Top-level requires CMake 3.16, prepends `cmake/` to `CMAKE_MODULE_PATH`, and sets required C++17.
+- Top-level enables AUTOUIC/AUTOMOC/AUTORCC; requires Qt::Core, Qt::Network, Qt::Sql, Qt::LinguistTools.
+- Top-level sets `CMAKE_RUNTIME_OUTPUT_DIRECTORY` to `${CMAKE_BINARY_DIR}/bin` so `booking-resources-server`, `booking-resources-cli`, `booking-resources-web`, and `tests` (when `BUILD_TESTING` is on) are written to one directory. Multi-config generators append the configuration name.
+- Builds `modules/`, then `server/`, `cli/`, and `web/`; `tests/` is added last when `BUILD_TESTING` is on.
+- `modules/local_cli`: `BookingResourcesLocalCli` (`BookingResources::LocalCli`) with `LocalCliRegistry` + `LocalCliProtocol`.
+- `modules/application`: `BookingResourcesApplication` (`BookingResources::Application`), common `QCoreApplication` wrapper for startup/shutdown logging and termination handling.
+- `modules/application_log`: `BookingResourcesApplicationLog` (`BookingResources::ApplicationLog`), shared Qt message handler and rotating file logging.
+- `modules/shared_memory`: `BookingResourcesSharedMemory` (`BookingResources::SharedMemory`) with `SharedMemoryClient`, `SharedMemoryServer`, and `SharedMemoryProtocol`.
+- `modules/translator`: `BookingResourcesTranslator` (`BookingResources::Translator`), provides `booking_resources_setup_translations()` through `cmake/BookingResourcesTranslatorMacros.cmake`.
+- `server/`: `BookingResourcesCore` static library + `booking-resources-server`; core sources are split across `src/`, `src/bots/`, `src/commands/`, and `src/menus/`; core links ApplicationLog, Translator, LocalCli, SharedMemory, executable links Application.
+- `cmake/BookingResourcesCoreMacros.cmake`: `booking_resources_target_link_core()` force-links static core archives (`/WHOLEARCHIVE`, `-force_load`, or `--whole-archive`) so self-registration units are kept.
+- `cli/`: `booking-resources-cli` executable; links Translator, LocalCli, and QtNetwork for `QLocalSocket`.
+- `web/`: `booking-resources-web` executable with embedded `src/html/web.qrc`; links Application, ApplicationLog, SharedMemory, Translator, and QtSql for `WebSessionStore`.
+- Process targets set `APP_NAME` / `APP_VERSION`: server uses `${PROJECT_NAME}-Server`, CLI uses `${PROJECT_NAME}`, and web uses `${PROJECT_NAME}-Web`.
+- `cmake/FindBookingResources.cmake` supports `find_package(BookingResources COMPONENTS LocalCli SharedMemory Translator Application ApplicationLog Core)` by including the matching module files.
+- `tests/` defines the unified `tests` executable: Qt Test suites are `.cpp` sources with `BOOKING_RESOURCES_REGISTER_TEST`, compiled into one runner (`Tests.cpp`) that lists and executes suites in-process. Web production sources used by tests are compiled as `BookingResourcesWebTestObjects` with `APP_NAME=${PROJECT_NAME}-Web` so they do not inherit Core's server `APP_NAME`. CTest registers `tests` plus each suite name (`COMMAND tests <SuiteName>`).
+- `booking-resources-server` and `booking-resources-web` install runtime/library targets via `GNUInstallDirs`.
+- Translation test resources use `booking_resources_translator_tests_translations` and `update_translator_tests_translations` under `tests/translator/`.

@@ -1,0 +1,28 @@
+---
+description: Web interface architecture and UI conventions
+globs: web/**
+alwaysApply: false
+---
+# Web Interface
+- `booking-resources-web` is a separate Qt executable under `web/`; it uses Application, ApplicationLog, SharedMemory, Translator, and QtSql-backed `WebSessionStore`.
+- `WebApplication` derives from `BookingResourcesApplication`; logging goes through `WebLog`, which delegates to shared `ApplicationLog`.
+- `WebConfig` is INI user scope with keys under `web/*` plus `log/file`; defaults include bind address `127.0.0.1`, HTTP port `8080`, HTTPS port `8443`, shared memory key `booking-resources-web`, page title `Booking Resources`, and ideal-thread-count workers.
+- Web IPC requires `web/shared_memory_secret` or `--web-shared-memory-secret`; keep server and web secrets in sync.
+- `WebClient` attaches to shared-memory IPC and verifies a `ping`/`pong` handshake in the background. HTTP listeners start even if the server is not running yet; `WebClient` retries attach and handshake periodically until the server is available and again after the connection is lost. Server-backed API routes return 503 while IPC is down.
+- Web CLI options include `--bind-address`, `--http-port`, `--https-port`, `--no-http`, `--redirect-http-to-https`, `--web-shared-memory-key`, `--web-shared-memory-secret`, `--log-file/-l`, `--https`, `--no-https`, `--external-https`, `--allow-insecure-http`, `--forwarded-headers`, `--trusted-proxy`, `--public-https-host`, TLS certificate/private-key files, `--tls-reload-interval`, `--threads`, `--storage-file`, and `--web-page-title`.
+- `WebServer` owns HTTP/HTTPS listeners. Keep request parsing in the socket thread, run request handling through `QThreadPool`, and return responses via queued calls to the socket thread.
+- Keep HTTP request limits and response security headers in `WebServer`: bounded headers/body, incomplete-request timeout, `nosniff`, referrer policy, X-Frame-Options, Permissions-Policy, CSP, JSON `no-store`, redirect-only HTTP without HSTS, and HSTS/Secure cookies when the specific request is HTTPS or trusted external HTTPS.
+- `WebSecurityPolicy` blocks plain application HTTP on non-loopback bind addresses unless `--allow-insecure-http` is explicit. Redirect-only HTTP listeners may bind non-loopback addresses.
+- `WebSessionStore` persists web users, sessions, events, files, and per-locale command cache in SQLite; it also keeps in-memory maps protected by `QReadWriteLock`.
+- Static frontend assets are embedded in `src/html/web.qrc` under the `:/web` prefix and served by `WebServer`.
+- Web authorization is not data-server registration. `/api/authorize` creates a local `WebSessionStore` user, then sends `authorize_user` IPC so `booking-resources-server` records the user in `UnregisteredUserModel`.
+- If `authorize_user` fails, do not report successful authorization; otherwise admins may never see the user.
+- Web API routes include public `/health`, `/api/runtime-config`, and `/api/i18n`; authorization routes `/api/authorize`, `/api/register`, and `/api/login`; session routes `/api/logout` and `/api/account/password`; and session-authenticated routes `/api/session`, `/api/profile`, `/api/commands`, `/api/user-settings`, `/api/messages`, `/api/callbacks`, `/api/events`, and `/api/files/<id>`.
+- Web sessions use the `br_session` cookie (`HttpOnly`, `SameSite=Lax`, and `Secure` when secure transport is active).
+- Server user settings are proxied through `/api/user-settings`; `locale` must remain editable even when other server settings are unavailable.
+- Use `/api/profile` for web-local locale updates after session creation; first/last name are collected during `/api/authorize` or `/api/register`.
+- `/api/i18n` renders `WebStaticTranslations::entries()` under `BookingResourcesTranslator::useLocale()`; update `WebStaticTranslations.cpp`, HTML `data-i18n*` attributes, JS text keys, and web `.ts` files together.
+- Frontend locale selection in `i18n.js` preserves `ru_stand` as a distinct UI locale; `primaryLocale()` / `intlLocale()` map `ru_stand` to `ru` only for browser language and formatting helpers. Web settings `Default` stores an empty preference and follows the browser language (`navigator.language` / `Accept-Language`), resolved to `en` or `ru`. The web process initializes its base translator with English and uses scoped locale rendering for requested dictionaries.
+- Frontend history is localStorage-based. Preserve local message IDs separately from server `message_id`; inline button edits should target the clicked history item when available.
+- Render message text with safe DOM construction. Use `innerHTML` only for clearing trusted container contents; keep HTML allowlists and command-link parsing safe. Autolinked URLs use the same scheme allowlist as HTML `<a>` (`http`, `https`, `mailto`).
+- Network `fetch` failures should be converted to translated UI errors, not browser strings like `Failed to fetch`.

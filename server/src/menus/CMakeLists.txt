@@ -1,0 +1,71 @@
+set(BOOKING_RESOURCES_MENUS_SOURCES
+  MessengerMenuStaticRegistration.h
+  MessengerMenuIds.h
+  MessengerMenuManagerTypes.h
+  MessengerAbstractMenu.cpp
+  MessengerAbstractMenu.h
+  MessengerAdminUsersState.cpp
+  MessengerAdminUsersState.h
+  MessengerMainMenu.cpp
+  MessengerMainMenu.h
+  MessengerResourcesHomeMenu.cpp
+  MessengerResourcesHomeMenu.h
+  MessengerFreeResourcesMenu.cpp
+  MessengerFreeResourcesMenu.h
+  MessengerSoonestResourcesMenu.cpp
+  MessengerSoonestResourcesMenu.h
+  MessengerSoonestResources10Menu.cpp
+  MessengerSoonestResources10Menu.h
+  MessengerUsersListMenu.cpp
+  MessengerUsersListMenu.h
+  MessengerStatisticsMenu.cpp
+  MessengerStatisticsMenu.h
+  MessengerUserSettingsMenu.cpp
+  MessengerUserSettingsMenu.h
+  MessengerAdminHomeMenu.cpp
+  MessengerAdminHomeMenu.h
+  MessengerAdminNotificationMenu.cpp
+  MessengerAdminNotificationMenu.h
+  MessengerAdminSettingsMenu.cpp
+  MessengerAdminSettingsMenu.h
+  MessengerAdminOccupationDurationsMenu.cpp
+  MessengerAdminOccupationDurationsMenu.h
+  MessengerAdminUsersMenu.cpp
+  MessengerAdminUsersMenu.h
+  MessengerAdminUserCardMenu.cpp
+  MessengerAdminUserCardMenu.h
+  MessengerAdminUserAddMenu.cpp
+  MessengerAdminUserAddMenu.h
+  MessengerAdminUserEditMenu.cpp
+  MessengerAdminUserEditMenu.h
+  MessengerAdminUserDeleteMenu.cpp
+  MessengerAdminUserDeleteMenu.h
+  MessengerAdminResourcesState.cpp
+  MessengerAdminResourcesState.h
+  MessengerAdminResourcesMenu.cpp
+  MessengerAdminResourcesMenu.h
+  MessengerAdminResourceCardMenu.cpp
+  MessengerAdminResourceCardMenu.h
+  MessengerAdminResourceAddMenu.cpp
+  MessengerAdminResourceAddMenu.h
+  MessengerAdminResourceEditMenu.cpp
+  MessengerAdminResourceEditMenu.h
+  MessengerAdminResourceDeleteMenu.cpp
+  MessengerAdminResourceDeleteMenu.h
+  MessengerAdminBlacklistMenu.cpp
+  MessengerAdminBlacklistMenu.h
+  MessengerAdminPendingAccessMenu.cpp
+  MessengerAdminPendingAccessMenu.h
+  MessengerUserResourcesState.cpp
+  MessengerUserResourcesState.h
+  MessengerUserResourceCardMenu.cpp
+  MessengerUserResourceCardMenu.h
+  MessengerResourceQueueMenu.cpp
+  MessengerResourceQueueMenu.h
+  MessengerResourceScheduleMenu.cpp
+  MessengerResourceScheduleMenu.h
+)
+
+list(TRANSFORM BOOKING_RESOURCES_MENUS_SOURCES PREPEND "${CMAKE_CURRENT_LIST_DIR}/")
+
+set(BOOKING_RESOURCES_MENUS_SOURCES ${BOOKING_RESOURCES_MENUS_SOURCES} PARENT_SCOPE)

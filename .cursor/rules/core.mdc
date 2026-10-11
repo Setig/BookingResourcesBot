@@ -1,0 +1,14 @@
+---
+description: Core collaboration and guardrails
+alwaysApply: true
+---
+# Core collaboration and guardrails
+- Project: Qt 5/6, C++17, CMake; executables `booking-resources-server`, `booking-resources-cli`, and `booking-resources-web`.
+- Shared reusable libraries live under `modules/`; process-specific startup stays in `server/`, `cli/`, and `web/`.
+- Communicate with the user in Russian.
+- Write code comments and documentation in English.
+- Prefer line-based citations (file + line range) over large pasted snippets.
+- Do not run CMake configure/build, ctest, or translation update targets unless explicitly requested.
+- Do not modify anything under `build/` (generated artifacts).
+- Prefer editing sources under `server/`, `cli/`, `web/`, `modules/`, `tests/`, documentation under `docs/` and `README.md`, and CMake modules under `cmake/`.
+- Tests live under `tests/`; do not run or update them unless explicitly requested.

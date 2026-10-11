@@ -1,0 +1,10 @@
+.git
+.qtcreator
+build
+build*
+dist
+CMakeLists.txt.user*
+**/*.user
+**/*.user.*
+.DS_Store
+Thumbs.db
